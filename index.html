@@ -199,6 +199,16 @@
         </li>
       
         
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -370,7 +380,20 @@
 <p>小学期中经受着<strong>Yin yitong</strong>教授的进阶概率论和<strong>Bei xiaohui</strong>教授的近似算法的洗礼，在<strong>APEX</strong>中与小伙伴一起狂补机器学习和深度学习的理论知识。非常感谢<strong>cs229</strong>和<strong>cs231n</strong>的精心准备。</p>
 <p>那段时间感觉是我大学生活中效率最高的一段时间，感觉自己推开了走向新世界的大门，深深的陶醉在深度学习的美妙之中。</p>
 <p>八月份暑期课程结束后，我和<strong>lelele</strong>和<strong>小咩</strong>开始正式地做围棋相关的工作，那时候有一个学长<strong>Jin wengong</strong>作为我们的领路人。</p>
-<p>我们进入的时候<strong>MCTS</strong>已经被wengong写了个大概，然后训练了一个简化版的<strong>Policy Network</strong>。</p>
+<p>我们进入的时候<strong>MCTS</strong>已经被wengong写了个大概，然后训练了一个简化版的<strong>Policy Network</strong>，正在做reinforcement learning相关的事情。</p>
+<p>刚到公司时还与那时候的AI下了一盘，完全没有死活概念的它被我杀花了。</p>
+<p>之后我进来做的就是提取features和研究那些nakada、response and non-response features。</p>
+<p>看到论文中给出的nakada、response and non-response pattern的数目时我是蒙逼的，这一堆堆看起来像素数的数是神马？</p>
+<p>发现算不出来之后就只能把所有的数据中出现次数前列的这些pattern提了出来。</p>
+<p>1个多月的时间过得飞快，天天朝九晚六的生活似乎也体验到了些许上班族的感觉，每次下班跟乐乐往回走的时候就会想，这以后下班了能做什么，我会不会孤独终老（大雾）？？？</p>
+<p>wengong在8月低就要出发去MIT了，留下了我们train过一轮但是不收敛的rl model，还留下了3天速成的我怎么感觉也不对的MCTS，不过wengong确实教会了我们很多，告诉我们怎么写dl代码，怎么训练，怎么给参数，怎么差错。这都是一些宝贵的不可能从论文中学到的dl经验。</p>
+<p>当时我手上在训tree policy的softmax， 但是第一轮后就过拟合了，非常迷幻，后来发现是代码bug):。</p>
+<p>这中间还有一个小乌龙，我们提pattern的时候研究我们使用的开源程序kgs-dataset-processor，然后随便选了一盘，看看这里面每一步是怎么处理的。 然后就看见第一步在天元旁两格，当时我和小咩一惊，这尼玛乱序的？ 给wengong说了下，把wengong吓傻了，以为两个月白干了。 然后我们抱着不甘心的心态去server上load了下来sgf，然后扔进goboard，发现这人还真是第一步仍天上。。。</p>
+<p>wengong走了后我一直觉得MCTS不对，就跟同事们都说了，然后大家就查mcts代码，最后找bug小能手老吴发现是在搜索对手层的时候正负号写反了，导致我们的AI会认为对手都走最愚蠢的应对，改掉后棋力大涨，大概终于步入了<strong>真正</strong>的业5。</p>
+<p>然后我和乐乐终于可以回家啦，小咩跟随头头去追寻音乐事业离开了我们？（雾）回家的几天我们围棋小分队迎来了一个主要的负责人，zwp。</p>
+<p>在家里跟wp<strong>汇报</strong>（人民的民义看多了）了一下现在的工作进展。</p>
+<p>回来之后我们陷入了一个大坑大坑大大坑，我们为了同时使用炫酷无比的8块GTX-1080，决定把Theano的代码全权搬运到tensorflow上来，同时针对以前提前提feature不好改动的情况决定序列化棋局来在训练前提取feature。</p>
+<p>然后多卡是很快的写好了， 速度大概快了5倍。可是悲剧的是无论如何也不能复现出theano上的结果，而且差距非常大。几乎花了两个月我们都在纠结于tensorflow的代码版本上。</p>
 <p>继续挖坑以后填。</p>
 
           
