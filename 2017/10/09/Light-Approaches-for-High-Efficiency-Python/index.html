@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="bywbilly">
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
-<meta property="og:updated_time" content="2017-10-09T22:08:46.000Z">
+<meta property="og:updated_time" content="2017-10-09T22:17:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -514,13 +514,13 @@ def sum(x, y):
     return x + y
 </code></pre><p><strong>nopython</strong> here means the Numba Compiler do not call any Python C API, but it requires that all the variables types do can be inferred. If not, Numba has to fall back. If yes, this mode could generate much faster code.</p>
 <p><strong>nogil</strong> may not be the key point of this article, since I write it for the AI researchers. But this is a really excellent feature. With CPython(GIL), you cannot write any multi-threading code since it will execute even slower than single thread. But now, with nogil mode, you could do that! Numba will release the lock of GIL of that function.</p>
-<p>Another important feature it support is the <strong>universal function</strong> that also important for numpy. You could see the <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/ufuncs.html" target="_blank" rel="external">numpy ufunc</a> for details. Basiclly, the idea is to apply some specific funtion highly parallel to each element of a matrix. You could use it like:</p>
+<p>Another important feature it support is the <strong>universal function</strong> that also important for numpy. You could see the <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/ufuncs.html" target="_blank" rel="external">numpy ufunc</a> for details. Basiclly, the idea is to apply some specific funtion highly parallel to each element of a matrix. You could use the example below, we want to add the same constant to each element of a vector.</p>
 <pre><code>import numba
 
 @numba.vectorize(&quot;numba.float32(numba.float32, numba.float32)&quot;, target=&quot;parallel&quot;, nopython=True)
 def vec_add(x, c):
     return x + c
-</code></pre><p>I don’t want to list too many similar codes with numba or without. I just report the results here. For a 10k vector, the Numba implemented <strong>ufunc</strong> is <strong>180</strong> times faster than the function just with <strong>@jit</strong> and is just <strong>2</strong> times slower than the original highly optimized Numpy universal function.</p>
+</code></pre><p>I don’t want to list too many similar codes with numba or without. I just report the results here. For a 10k vector, the Numba implemented <strong>ufunc</strong> is <strong>180</strong> times faster than the function just with <strong>for loop</strong> decorated by <strong>@jit</strong> and is just <strong>2</strong> times slower than the original highly optimized Numpy universal function.</p>
 <p>Here there are 3 options for the argument <em>target</em>, “<strong>cpu</strong>“, “<strong>parallel</strong>“ and “<strong>cuda</strong>“. You should choose them with respect to the size of your data. </p>
 <p>However, Numba also has its own limitations. It do not support list comprehension and do not support the infrence of any function in <strong>Numpy.random</strong>. So it’s not as good as we think when you actually use it. So I recommend that it’s really good for optimizing numerous <strong>for loop</strong> with easy matrix calculation. We could also expect that Numba will support more and more features in the future. Actually, in the next pre-release version, it said that they will support <strong>*Numpy.random</strong>.</p>
 <p>Numba also supports some more powerful but experimental features, like <strong>auto parallel</strong>. To learn more about it, you could refer to the <a href="http://numba.pydata.org/numba-doc/0.35.0/user/jit.html" target="_blank" rel="external"><strong>doc</strong></a>. </p>
