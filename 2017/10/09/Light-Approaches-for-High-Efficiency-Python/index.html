@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="bywbilly">
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
-<meta property="og:updated_time" content="2017-10-09T22:21:06.000Z">
+<meta property="og:updated_time" content="2017-10-09T22:29:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -527,7 +527,7 @@ def vec_add(x, c):
 <h1 id="Cython"><a href="#Cython" class="headerlink" title="Cython"></a>Cython</h1><p>Now I am going to introduce Cython and I quite like Cython(Maybe just because I was using Cython for some time before I knew Numba). </p>
 <p>The way Cython used to optimize Python code is more straightforward. It just try to translate the Python code with little modification into  C/C++ code. Then compile these code into <strong>Dynamic-link library(DLL)</strong>. After that, Python Interpreter could load this DLL library and use it!</p>
 <p>So if you want to use Cython to speed up your code, you need to learn how to write Cython code.</p>
-<p>It’s a little bit complicated than Numba, but it’s quite easy compared with use C/C++ directly.</p>
+<p>It’s a little bit complicated than Numba, but it’s quite easy compared with using C/C++ directly.</p>
 <p>I’d like to use the code listed previously to explain how to write Cython code.</p>
 <pre><code>import numpy as np
 cimport numpy as np
@@ -547,7 +547,10 @@ cdef double _sum2d(np.ndarray[np.float32_t, ndim=2] arr):
 
 def sum2d(arr):
     return _sum2d(arr)
-</code></pre>
+</code></pre><ul>
+<li>The Filename Extension of Cython code is <strong>pyx</strong></li>
+</ul>
+
       
     </div>
 
