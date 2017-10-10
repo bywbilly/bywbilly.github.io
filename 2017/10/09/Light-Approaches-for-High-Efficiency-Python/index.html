@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="bywbilly">
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
-<meta property="og:updated_time" content="2017-10-10T03:58:37.000Z">
+<meta property="og:updated_time" content="2017-10-10T04:12:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -728,7 +728,57 @@ def greedy_action(self, action, left):
     step = left
     act = [action[0], action[1]]
     self.env.greedy_action(act, step)
-</code></pre>
+</code></pre><p>We have known that how to construct a Cython warpper <strong>C++ std library</strong>. But how about the type of a function return in Cython is <strong>C++ std library</strong>?</p>
+<p>At first, I also use an example to illustrate:</p>
+<pre><code># C++ declaration
+vector[pair[int, int]] warmup()
+
+# Cython interface
+def warmup(self):
+    ret = []
+    pro_ret = self.env.warmup()
+    for item in pro_ret:
+        ret.append((item.first, item.second))
+    return ret
+</code></pre><ul>
+<li><code>pro_ret</code> here is a Cython object, which convert the original type to a new Cython type.</li>
+<li>You could see the way we access the data struct is quite similar with the way in C++ throught <code>item.first item.second</code>.</li>
+</ul>
+<p>Unfortunately, there are also no clear documents for how to accsee these things. But here is a basic idea to follow:</p>
+<pre><code>Python type =&gt;    C++ type    =&gt; Python type
+bytes        std::string    bytes
+iterable    std::vector    list
+iterable    std::list    list
+iterable    std::set    set
+iterable (len 2)    std::pair    tuple (len 2)
+</code></pre><p>Another more complicated example:</p>
+<pre><code># C++ declaration
+std::map&lt;std::pair&lt;int, int&gt;, std::vector&lt;double&gt; &gt; current_state(bool pytorch=false);
+
+# Cython interface
+def current_state(self, pytorch=False):
+    state = np.ndarray((5, 107, 128), dtype=np.float32)
+    pro_state = self.env.current_state()
+    for item in pro_state: # iterable
+        x = item.first.first
+        y = item.first.second
+        for i, feature in enumerate(item.second): # iterable
+            state[i, x, y] = feature
+    if pytorch:
+        state = state.reshape((1, 5, 107, 128))
+    else:
+        state = state.transpose((1, 2, 0)).reshape(1, 107, 128, 5)
+    return state
+</code></pre><p> If you want to give attribute access, you could just implement some properties:</p>
+<pre><code>@property
+def row(self):
+    return self.env.row
+
+@row.setter
+def row(self):
+    def __set(self, row): self.env.row = row
+</code></pre><p> Besides, you could also use these <strong>C++ std library</strong> in your Cython code directly to speed it up!</p>
+<h3 id="Analysis-Cython-code"><a href="#Analysis-Cython-code" class="headerlink" title="Analysis Cython code"></a>Analysis Cython code</h3>
       
     </div>
 
