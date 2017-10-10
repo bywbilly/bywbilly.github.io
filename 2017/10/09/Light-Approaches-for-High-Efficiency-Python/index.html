@@ -95,7 +95,7 @@
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png">
-<meta property="og:updated_time" content="2017-10-10T17:52:33.000Z">
+<meta property="og:updated_time" content="2017-10-10T18:08:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -365,7 +365,7 @@
       
         <p>Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries.</p>
 <p>So, here comes a question: Can we make Python run much faster? The answer is definitely <strong>YES</strong>!</p>
-<p>Before introduce the light approaches to speed up Python, I want to show a little example – sum up a 2-dimension array.</p>
+<p>Before introducing the light approaches to speed up Python, I want to show a little example – sum up a 2-dimension array.</p>
 <p>Original Python:</p>
 <pre><code>import numpy as np
 
@@ -479,7 +479,7 @@ int main() {
 <img src="/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png" alt="Results" title="Results">
 <p>You see, C++ is even slower. The reason may be the excellent optimization of Numpy!</p>
 <p>Through the example, we could believe that there are many <strong>Light-Approaches</strong> for speeding up Python code. I will introduce two popular tools in the next sections, <a href="https://numba.pydata.org/" target="_blank" rel="external"><strong>Numba</strong></a> and <a href="http://cython.org/" target="_blank" rel="external"><strong>Cython</strong></a>.</p>
-<h2 id="Numba"><a href="#Numba" class="headerlink" title="Numba"></a>Numba</h2><p>Numba utilizes just-in-time(JIT) compilation, which could finish compilation during execution. So numba could <strong>infer the type</strong> of your Python object(variable) <strong>during your execution</strong>. People may ask here, why mainstream Python compiler do not support this feature? There are too many history problems here. Nowadays, the most popular python <em>Interpreter</em> is <a href="https://github.com/python/cpython" target="_blank" rel="external"><strong>CPython</strong></a> who uses a <a href="https://wiki.python.org/moin/GlobalInterpreterLock" target="_blank" rel="external">GIL</a>(GlobalInterpreterLock). Some minor <em>Interpreters</em> are trying to do these things, but they are still catching up, e.g <a href="https://pypy.org/" target="_blank" rel="external"><strong>PyPy</strong></a>.</p>
+<h2 id="Numba"><a href="#Numba" class="headerlink" title="Numba"></a>Numba</h2><p>Numba utilizes just-in-time(JIT) compilation, which could finish compilation during execution. So numba could <strong>infer the type</strong> of your Python object(variable) <strong>during your execution</strong>. People may ask here, why mainstream Python compiler does not support this feature? There are too many history problems here. Nowadays, the most popular python <em>Interpreter</em> is <a href="https://github.com/python/cpython" target="_blank" rel="external"><strong>CPython</strong></a> who uses a <a href="https://wiki.python.org/moin/GlobalInterpreterLock" target="_blank" rel="external">GIL</a>(GlobalInterpreterLock). Some minor <em>Interpreters</em> are trying to do these things, but they are still catching up, e.g <a href="https://pypy.org/" target="_blank" rel="external"><strong>PyPy</strong></a>.</p>
 <p>The basic usage of Numba is to add function decorator <strong>@jit</strong> to let Numba itself decide how to deal with the function. </p>
 <pre><code>from numba import jit
 
@@ -503,7 +503,7 @@ def sum(x, y):
 @jit(numba.float32(numba.int32(numba.int32, numba.float32), numba.int32))
 def sum(x, y):
     return x + y
-</code></pre><p>When you call or inline other functions, you need to make sure every corresponding functions have a <strong>jit</strong> decorator, or Numba may generate some code that runs slower than original one. Like in the example below, you <strong>cannot omit</strong> the decorator of the first function.</p>
+</code></pre><p>When you call or inline other functions, you need to make sure every corresponding function have a <strong>jit</strong> decorator, or Numba may generate some code that runs slower than the original one. Like in the example below, you <strong>can not omit</strong> the decorator of the first function.</p>
 <pre><code>from numba import jit
 
 @jit
@@ -524,8 +524,8 @@ def sum(x, y):
 def sum(x, y):
     return x + y
 </code></pre><p><strong>nopython</strong> here means the Numba Compiler do not call any Python C API, but it requires that all the variables types do can be inferred. If not, Numba has to fall back. If yes, this mode could generate much faster code.</p>
-<p><strong>nogil</strong> may not be the key point of this article, since I write it for the AI researchers. But this is a really excellent feature. With CPython(GIL), you cannot write any multi-threading code since it will execute even slower than single thread. But now, with nogil mode, you could do that! Numba will release the lock of GIL of that function.</p>
-<p>Another important feature it support is the <strong>universal function</strong> that are also important for numpy. You could see the <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/ufuncs.html" target="_blank" rel="external">numpy ufunc</a> for details. Basiclly, the idea is to apply some specific funtion highly parallel to each element of a matrix. You could use the example below, we want to add the same constant to each element of a vector.</p>
+<p><strong>nogil</strong> may not be the key point of this article since I write it for the AI researchers. But this is a really excellent feature. With CPython(GIL), you cannot write any multi-threading code since it will execute even slower than a single thread. But now, with nogil mode, you could do that! Numba will release the lock of GIL of that function.</p>
+<p>Another important feature it supports is the <strong>universal function</strong> that is also important for numpy. You could see the <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/ufuncs.html" target="_blank" rel="external">numpy ufunc</a> for details. Basically, the idea is to apply some specific function highly parallel to each element of a matrix. You could use the example below, we want to add the same constant to each element of a vector.</p>
 <pre><code>import numba
 
 @numba.vectorize(&quot;numba.float32(numba.float32, numba.float32)&quot;, target=&quot;parallel&quot;, nopython=True)
@@ -533,7 +533,7 @@ def vec_add(x, c):
     return x + c
 </code></pre><p>I don’t want to list too many similar codes with numba or without. I just report the results here. For a 10k vector, the Numba implemented <strong>ufunc</strong> is <strong>180</strong> times faster than the function just with <strong>for loop</strong> decorated by <strong>@jit</strong> and is just <strong>2</strong> times slower than the original highly optimized Numpy universal function.</p>
 <p>Here there are 3 options for the argument <code>target</code>, “<strong>cpu</strong>“, “<strong>parallel</strong>“ and “<strong>cuda</strong>“. You should choose them with respect to the size of your data. </p>
-<p>However, Numba also has its own limitations. It do not support list comprehension and do not support the infrence of any function in <strong>Numpy.random</strong>. So it’s not as good as we think when you actually use it. So I recommend that it’s really good for optimizing numerous <strong>for loop</strong> with easy matrix calculation. We could also expect that Numba will support more and more features in the future. Actually, in the next pre-release version, it said that they will support <strong>Numpy.random</strong>.</p>
+<p>However, Numba also has its own limitations. It does not support list comprehension and does not support the inference of any function in <strong>Numpy.random</strong>. So it’s not as good as we think when you actually use it. So I recommend that it’s really good for optimizing numerous <strong>for loop</strong> with easy matrix calculation. We could also expect that Numba will support more and more features in the future. Actually, in the next pre-release version, it said that they will support <strong>Numpy.random</strong>.</p>
 <p>Numba also supports some more powerful but experimental features, like <strong>auto parallel</strong>. To learn more about it, you could refer to the <a href="http://numba.pydata.org/numba-doc/0.35.0/user/jit.html" target="_blank" rel="external"><strong>doc</strong></a>. </p>
 <h1 id="Cython"><a href="#Cython" class="headerlink" title="Cython"></a>Cython</h1><p>Now I am going to introduce Cython and I quite like Cython(Maybe just because I was using Cython for some time before I knew Numba). </p>
 <p>The way Cython used to optimize Python code is more straightforward. It just try to translate the Python code with little modification into  C/C++ code. Then compile these code into <strong>Dynamic-link library(DLL)</strong>. After that, Python Interpreter could load this DLL library and use it!</p>
@@ -567,15 +567,15 @@ def sum2d(arr):
 <li>You could define the Cython function or variable in three ways:<ul>
 <li><strong>cdef</strong>: Define function in the layer of <strong>pure</strong> C/C++ language.</li>
 <li><strong>def</strong>: Define pure python function</li>
-<li><strong>cpdef</strong>: Define function that is mixed with C/C++ and Python, whichs means that you could call or use it in C/C++ or Python easily with the cost of time.</li>
+<li><strong>cpdef</strong>: Define a function that is mixed with C/C++ and Python, which means that you could call or use it in C/C++ or Python easily with the cost of time.</li>
 </ul>
 </li>
 <li><strong>np.ndarray[np.float32_t, ndim=2]</strong> seems to be long, but it is a type just like <strong>int</strong> in C.</li>
 <li>If you do not declare <strong>explicitly</strong> the type of function or variable, cython will regard it as a Python object.</li>
 <li>Like listed previously, <strong>cdef</strong> defines a function in pure C/C++, we cannot call it directly from a Python program, so we use another interface(<strong>sum2d</strong>) to call it.</li>
 </ul>
-<p>Still remember the basic idea of Cython?  Cython compiler need to translates/compiles the Cython code into C/C++ code that calls Python source code directly, then wrap it as a dynamic-link library. To make this, we need to write some instructions for compiling.</p>
-<p>We call these intstructions <code>setup.py</code> conventionally.</p>
+<p>Do you still remember the basic idea of Cython?  Cython compiler needs to translates/compiles the Cython code into C/C++ code that calls Python source code directly, then wrap it as a dynamic-link library. To make this, we need to write some instructions for compiling.</p>
+<p>We call these instructions <code>setup.py</code> conventionally.</p>
 <pre><code># setup.py
 from distutils.core import setup, Extension
 from Cython.Build import cythonize
@@ -594,7 +594,7 @@ setup(ext_modules = cythonize(Extension(
 <ul>
 <li><code>filename</code> here is the name of the <strong>DLL</strong>. Notice this name has to be <strong>exactly the same</strong> as the <strong>pyx</strong> file we’d like to compile.</li>
 <li><code>sources</code> includes the Cython source code(.pyx) and the C/C++ code we want to call or wrap.</li>
-<li><code>language</code> is the target layer of language, you could choose C/C++, default is C.</li>
+<li><code>language</code> is the target layer of language, you could choose C/C++, the default is C.</li>
 <li><code>include_dirs</code> is the <code>-I</code> flag in gcc, which means add directory to include search path.</li>
 <li><code>library_dirs</code> is the <code>-L</code> flag in gcc, which means add directory for library files.</li>
 <li><code>libraries</code> is the <code>-l</code> flag in gcc, which means add directory for trying to link with a library file.</li>
@@ -603,7 +603,7 @@ setup(ext_modules = cythonize(Extension(
 </ul>
 <p>Then we need to compile it with:</p>
 <p><code>python setup.py build_ext --inplace</code></p>
-<p>Then you could see <code>filename.c</code> and <code>filename.so</code> in the current directory. The first file is the C/C++ source code after compileing, the second is the <strong>DLL</strong>.</p>
+<p>Then you could see <code>filename.c</code> and <code>filename.so</code> in the current directory. The first file is the C/C++ source code after compiling, the second is the <strong>DLL</strong>.</p>
 <p>Then you could try to import it in a Python file:</p>
 <pre><code>import filename
 from filename import sum2d # Notice you cannot import _sum2d here since it&apos;s a cdef function
@@ -716,7 +716,7 @@ cdef extern from &quot;Env.h&quot;:
 <li><code>cdef Env env</code> holds a C++ instance(interface) that we’re wrapping.</li>
 <li><code>__cinit__</code> is something like <code>__init__</code></li>
 </ul>
-<p>Then we need to wrap(build interface for) each function we want to call. Here I give some examples of the complicated functions.</p>
+<p>Then we need to wrap(build an interface for) each function we want to call. Here I give some examples of the complicated functions.</p>
 <pre><code># C++ declaration
 void action_test(vector[pair[int, int]])
 
@@ -728,7 +728,7 @@ def action_test(self, actions):
         vec.push_back(ret)
     self.env.action_test(vec)
 </code></pre><p>We use <code>cdef vector[pair[int, int]] vec</code> to construct a Cython warpper <code>std::vector&lt;std::pair&lt;int, int&gt; &gt;</code> data struct in C++. Then we pass it to the C++ code through the C++ instance(interface).</p>
-<p>There is no clear documents about how to contruct the Cython warpper <strong>C++ std library</strong>, you could try some reasonable usages to figure it out by yourself, or just go through the source code of Cython. Basicly, the API implemented by Cython is almost the same with that in C++, at least for the name.</p>
+<p>There are no clear documents about how to construct the Cython wrapper <strong>C++ std library</strong>, you could try some reasonable usages to figure it out by yourself, or just go through the source code of Cython. Basically, the API implemented by Cython is almost the same with that in C++, at least for the name.</p>
 <p>Here is another example:</p>
 <pre><code># C++ declaration
 void greedy_action(pair[int, int], int)
@@ -740,7 +740,7 @@ def greedy_action(self, action, left):
     step = left
     act = [action[0], action[1]]
     self.env.greedy_action(act, step)
-</code></pre><p>We have known that how to construct a Cython warpper <strong>C++ std library</strong>. But how about the type of a function return in Cython is <strong>C++ std library</strong>?</p>
+</code></pre><p>We have known that how to construct a Cython wrapper <strong>C++ std library</strong>. But how about the type of a function return in Cython is <strong>C++ std library</strong>?</p>
 <p>At first, I also use an example to illustrate:</p>
 <pre><code># C++ declaration
 vector[pair[int, int]] warmup()
@@ -790,14 +790,14 @@ def row(self):
 def row(self):
     def __set(self, row): self.env.row = row
 </code></pre><p> Besides, you could also use these <strong>C++ std library</strong> in your Cython code directly to speed it up!</p>
-<h3 id="Analysis-Cython-code"><a href="#Analysis-Cython-code" class="headerlink" title="Analysis Cython code"></a>Analysis Cython code</h3><p>Cython could speed up the Python code mainly because we explicilty specify the static type of the Python variable(object). Sometimes, we may forget to specify it due to many reasons, so Cython itself provide us a little tool to display how well your Cython code is.</p>
+<h3 id="Analysis-Cython-code"><a href="#Analysis-Cython-code" class="headerlink" title="Analysis Cython code"></a>Analysis Cython code</h3><p>Cython could speed up the Python code mainly because we explicitly specify the static type of the Python variable(object). Sometimes, we may forget to specify it due to many reasons, so Cython itself provide us with a little tool to display how well your Cython code is.</p>
 <p>We could type:</p>
 <pre><code>cython -a xxx.pyx
 </code></pre><p>Then Cython will analysis your code and generate a <code>xxx.html</code> file in the same directory.</p>
 <p>If we type <code>cython -a cloop.pyx</code> and open <code>cloop.html</code>, we could get:</p>
 <img src="/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png" alt="Analysis Results" title="Analysis Results">
 <p>As the statements above the code, Yellow lines means the place where Cython code interacts with Python and click it you could see how Python translate it into C code. We could see that there is no yellow line in the main part of <code>_sum2d</code>, which means that its performance will be quite good! </p>
-<h3 id="Advanced-C-Features"><a href="#Advanced-C-Features" class="headerlink" title="Advanced C++ Features"></a>Advanced C++ Features</h3><p>Cython itself is actually supports far more than C++ features listed above, but is’s a little bit far from the center of this article. I just list them here:</p>
+<h3 id="Advanced-C-Features"><a href="#Advanced-C-Features" class="headerlink" title="Advanced C++ Features"></a>Advanced C++ Features</h3><p>Cython itself actually supports far more than C++ features listed above, but is’s a little bit far from the centre of this article. I just list them here:</p>
 <ul>
 <li>Overloading</li>
 <li>Overloading operators</li>
@@ -808,7 +808,7 @@ def row(self):
 <li>Static member function</li>
 <li>Declaring/Using References</li>
 </ul>
-<p>But Cython <strong>do not</strong> supports <code>auto</code> and return a left value. They are still working on developing these featuers.</p>
+<p>But Cython <strong>do not</strong> supports <code>auto</code> and return a left value. They are still working on developing these features.</p>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
 <li><a href="https://numba.pydata.org/" target="_blank" rel="external"><strong>Numba Documents</strong></a></li>
 <li><a href="http://docs.cython.org/en/latest/" target="_blank" rel="external"><strong>Cython Documents</strong></a></li>
