@@ -94,7 +94,8 @@
 <meta property="og:site_name" content="bywbilly">
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
-<meta property="og:updated_time" content="2017-10-10T04:12:02.000Z">
+<meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png">
+<meta property="og:updated_time" content="2017-10-10T15:41:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -778,7 +779,14 @@ def row(self):
 def row(self):
     def __set(self, row): self.env.row = row
 </code></pre><p> Besides, you could also use these <strong>C++ std library</strong> in your Cython code directly to speed it up!</p>
-<h3 id="Analysis-Cython-code"><a href="#Analysis-Cython-code" class="headerlink" title="Analysis Cython code"></a>Analysis Cython code</h3>
+<h3 id="Analysis-Cython-code"><a href="#Analysis-Cython-code" class="headerlink" title="Analysis Cython code"></a>Analysis Cython code</h3><p>Cython could speed up the Python code mainly because we explicilty specify the static type of the Python variable(object). Sometimes, we may forget to specify it due to many reasons, so Cython itself provide us a little tool to display how well your Cython code is.</p>
+<p>We could type:</p>
+<pre><code>cython -a xxx.pyx
+</code></pre><p>Then Cython will analysis your code and generate a <code>xxx.html</code> file in the same directory.</p>
+<p>If we type <code>cython -a cloop.pyx</code> and open <code>cloop.html</code>, we could get:</p>
+<img src="/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png" alt="Analysis Results" title="Analysis Results">
+<p>As the statements above the code, Yellow lines means the place where Cython code interacts with Python and click it you could see how Python translate it into C code. We could see that there is no yellow line in the main part of <code>sum2d</code>, which means that its performance will be quite good! </p>
+
       
     </div>
 
@@ -823,6 +831,10 @@ def row(self):
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/10/Light-Approaches-for-High-Efficiency-Python/cloop/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
