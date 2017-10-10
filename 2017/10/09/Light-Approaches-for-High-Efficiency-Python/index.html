@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="bywbilly">
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
-<meta property="og:updated_time" content="2017-10-09T22:29:09.000Z">
+<meta property="og:updated_time" content="2017-10-10T03:11:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -549,8 +549,53 @@ def sum2d(arr):
     return _sum2d(arr)
 </code></pre><ul>
 <li>The Filename Extension of Cython code is <strong>pyx</strong></li>
+<li>Cython also has a sort of file like C header file ended with <strong>pxd</strong></li>
+<li>The <strong>cimport</strong> is to import <strong>pxd</strong> file.</li>
+<li>The two Cython decorators are to disable the bound check of Cython.</li>
+<li>You could define the Cython function or variable in three ways:<ul>
+<li><strong>cdef</strong>: Define function in the layer of <strong>pure</strong> C/C++ language.</li>
+<li><strong>def</strong>: Define pure python function</li>
+<li><strong>cpdef</strong>: Define function that is mixed with C/C++ and Python, whichs means that you could call or use it in C/C++ or Python easily with the cost of time.</li>
+<li><strong>np.ndarray[np.float32_t, ndim=2]</strong> seems to be long, but it is a type just like <strong>int</strong> in C.</li>
+<li>If you do not declare <strong>explicitly</strong> the type of function or variable, cython will regard it as a Python object.</li>
+<li>Like listed previously, <strong>cdef</strong> defines a function in pure C/C++, we cannot call it directly from a Python program, so we use another interface(<strong>sum2d</strong>) to call it.</li>
 </ul>
-
+</li>
+</ul>
+<p>Still remember the basic idea of Cython?  Cython compiler need to translates/compiles the Cython code into C/C++ code that calls Python source code directly, then wrap it as a dynamic-link library. To make this, we need to write some instructions for compiling.</p>
+<p>We call these intstructions <code>setup.py</code> conventionally.</p>
+<pre><code># setup.py
+from distutils.core import setup, Extension
+from Cython.Build import cythonize
+import numpy
+setup(ext_modules = cythonize(Extension(
+    &apos;filename&apos;,
+    sources=[&apos;filename.pyx&apos;],
+    language=&apos;c&apos;,
+    include_dirs=[numpy.get_include()],
+    library_dirs=[],
+    libraries=[],
+    extra_compile_args=[],
+    extra_link_args=[]
+)))
+</code></pre><p>Here I list all the optional arguments, which makes it a little complex. I am going to explain each of them specifically.</p>
+<ul>
+<li><code>filename</code> here is the name of the <strong>DLL</strong>. Notice this name has to be <strong>exactly the same</strong> as the <strong>pyx</strong> file we’d like to compile.</li>
+<li><code>sources</code> includes the Cython source code(.pyx) and the C/C++ code we want to call or wrap.</li>
+<li><code>language</code> is the target layer of language, you could choose C/C++, default is C.</li>
+<li><code>include_dirs</code> is the <code>-I</code> flag in gcc, which means add directory to include search path.</li>
+<li><code>library_dirs</code> is the <code>-L</code> flag in gcc, which means add directory for library files.</li>
+<li><code>libraries</code> is the <code>-l</code> flag in gcc, which means add directory for trying to link with a library file.</li>
+<li><code>extra_compile_args</code> is the extra compile arguments for gcc, like you could pass <code>-std=c++11</code></li>
+<li><code>extra_link_args</code> is the extra link arguments for gcc.</li>
+</ul>
+<p>Then we need to compile it with:</p>
+<p><code>python setup.py build_ext --inplace</code></p>
+<p>Then you could see <code>filename.c</code> and <code>filename.so</code> in the current directory. The first file is the C/C++ source code after compileing, the second is the <strong>DLL</strong>.</p>
+<p>Then you could try to import it in a Python file:</p>
+<pre><code>import filename
+from filename import sum2d # Notice you cannot import _sum2d here since it&apos;s a cdef function
+</code></pre>
       
     </div>
 
