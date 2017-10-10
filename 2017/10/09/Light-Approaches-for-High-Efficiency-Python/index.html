@@ -95,7 +95,7 @@
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png">
-<meta property="og:updated_time" content="2017-10-10T17:21:32.000Z">
+<meta property="og:updated_time" content="2017-10-10T17:52:33.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -525,7 +525,7 @@ def sum(x, y):
     return x + y
 </code></pre><p><strong>nopython</strong> here means the Numba Compiler do not call any Python C API, but it requires that all the variables types do can be inferred. If not, Numba has to fall back. If yes, this mode could generate much faster code.</p>
 <p><strong>nogil</strong> may not be the key point of this article, since I write it for the AI researchers. But this is a really excellent feature. With CPython(GIL), you cannot write any multi-threading code since it will execute even slower than single thread. But now, with nogil mode, you could do that! Numba will release the lock of GIL of that function.</p>
-<p>Another important feature it support is the <strong>universal function</strong> that also important for numpy. You could see the <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/ufuncs.html" target="_blank" rel="external">numpy ufunc</a> for details. Basiclly, the idea is to apply some specific funtion highly parallel to each element of a matrix. You could use the example below, we want to add the same constant to each element of a vector.</p>
+<p>Another important feature it support is the <strong>universal function</strong> that are also important for numpy. You could see the <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/ufuncs.html" target="_blank" rel="external">numpy ufunc</a> for details. Basiclly, the idea is to apply some specific funtion highly parallel to each element of a matrix. You could use the example below, we want to add the same constant to each element of a vector.</p>
 <pre><code>import numba
 
 @numba.vectorize(&quot;numba.float32(numba.float32, numba.float32)&quot;, target=&quot;parallel&quot;, nopython=True)
@@ -694,7 +694,7 @@ cdef extern from &quot;Env.h&quot;:
         int done()
 </code></pre><p>At the beginning of the code, we import some <strong>C++ std library</strong> implemented by Cython. We need to use it to interact with the C/C++ source code.</p>
 <ul>
-<li><code>cdef extern from xxx.h [namespace xxx]</code> tells the Cython which hearer file I am going to wrap.</li>
+<li><code>cdef extern from xxx.h [namespace xxx]</code> tells the Cython which header file I am going to wrap.</li>
 <li><code>cdef cppclass Env:</code> is going to define a C++ wrapper class in Cython</li>
 <li>Then we need to declare the function we want to call in our Python code. So the number of function in Cython code is much smaller than that in C++ code.</li>
 <li>The type of the function need to be exactly the same as the C/C++ source code, and the type must be in Cython type. You could learn how to do that through the examples I listed below or through the <a href="https://github.com/cython/cython" target="_blank" rel="external"><strong>source code</strong></a></li>
@@ -797,6 +797,25 @@ def row(self):
 <p>If we type <code>cython -a cloop.pyx</code> and open <code>cloop.html</code>, we could get:</p>
 <img src="/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png" alt="Analysis Results" title="Analysis Results">
 <p>As the statements above the code, Yellow lines means the place where Cython code interacts with Python and click it you could see how Python translate it into C code. We could see that there is no yellow line in the main part of <code>_sum2d</code>, which means that its performance will be quite good! </p>
+<h3 id="Advanced-C-Features"><a href="#Advanced-C-Features" class="headerlink" title="Advanced C++ Features"></a>Advanced C++ Features</h3><p>Cython itself is actually supports far more than C++ features listed above, but is’s a little bit far from the center of this article. I just list them here:</p>
+<ul>
+<li>Overloading</li>
+<li>Overloading operators</li>
+<li>Nested class declarations</li>
+<li>Templates</li>
+<li>Standard library</li>
+<li>Exceptions</li>
+<li>Static member function</li>
+<li>Declaring/Using References</li>
+</ul>
+<p>But Cython <strong>do not</strong> supports <code>auto</code> and return a left value. They are still working on developing these featuers.</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://numba.pydata.org/" target="_blank" rel="external"><strong>Numba Documents</strong></a></li>
+<li><a href="http://docs.cython.org/en/latest/" target="_blank" rel="external"><strong>Cython Documents</strong></a></li>
+<li><a href="https://github.com/cython/cython" target="_blank" rel="external"><strong>Cython Source Code</strong></a></li>
+<li><a href="https://abcdabcd987.com/cython/" target="_blank" rel="external"><strong>Lequn Chen’s blog(chinese)</strong></a></li>
+<li><a href="https://wiki.python.org/moin/" target="_blank" rel="external"><strong>Python wiki</strong></a></li>
+</ul>
 
       
     </div>
