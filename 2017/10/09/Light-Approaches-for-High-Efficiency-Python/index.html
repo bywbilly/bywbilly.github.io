@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="bywbilly">
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
-<meta property="og:updated_time" content="2017-10-10T03:21:27.000Z">
+<meta property="og:updated_time" content="2017-10-10T03:23:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -597,7 +597,7 @@ setup(ext_modules = cythonize(Extension(
 from filename import sum2d # Notice you cannot import _sum2d here since it&apos;s a cdef function
 </code></pre><h3 id="Wrap-a-C-C-program"><a href="#Wrap-a-C-C-program" class="headerlink" title="Wrap a C/C++ program"></a>Wrap a C/C++ program</h3><p>Python is really a good glue to glue programs. But you need to do the interactions with Python API. Imagine you have a simulator code/solver code in C/C++ written by someone else and you want to call it from a Python code. Fortunately, Cython could help us do this!</p>
 <p>Here we have a simulator of H.W.A written in C++ and we want to wrap it. We only need to do some minor modifications!</p>
-<p>I just show the header file <code>Env.h</code> here, the <code>Env.cpp</code> is to large.</p>
+<p>I just show the header file <code>Env.h</code> here, the <code>Env.cpp</code> is too large to display.</p>
 <p><code>Env.h</code>:</p>
 <pre><code>#include &lt;cstdio&gt;
 #include &lt;string&gt;
