@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="bywbilly">
 <meta property="og:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
-<meta property="og:updated_time" content="2017-10-10T03:23:30.000Z">
+<meta property="og:updated_time" content="2017-10-10T03:58:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is known for easy coding and calling c/c++ libraries. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries">
@@ -415,7 +415,7 @@ In [7]: %timeit -n 10 -r 3 cython_sum2d(x)
 
 In [8]: %timeit -n 10 -r 3 trivial_sum2d(x)
 10 loops, best of 3: 27 s per loop
-</code></pre><p>Numba and Cython’s running time are almost the same and it’s about 290 times faster than original Python. You may not believe me if I say that it runs even <strong>faster</strong> than trivial C++ code. Let’s do it!</p>
+</code></pre><p>Numba and Cython’s running time are almost the same and it’s about <strong>290</strong> times faster than original Python. You may not believe me if I say that it runs even <strong>faster</strong> than trivial C++ code. Let’s do it!</p>
 <p>Trivial C++:</p>
 <pre><code>#include &lt;ctime&gt;
 #include &lt;cstdlib&gt;
@@ -466,7 +466,7 @@ int main() {
 }
 </code></pre><p>The results are amazing:</p>
 <img src="/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png" alt="Results" title="Results">
-<p>You see, C++ is even slower. The reason may be that the excellent optimization of Numpy!</p>
+<p>You see, C++ is even slower. The reason may be the excellent optimization of Numpy!</p>
 <p>Through the example, we could believe that there are many <strong>Light-Approaches</strong> for speeding up Python code. I will introduce two popular tools in the next sections, <a href="https://numba.pydata.org/" target="_blank" rel="external"><strong>Numba</strong></a> and <a href="http://cython.org/" target="_blank" rel="external"><strong>Cython</strong></a>.</p>
 <h2 id="Numba"><a href="#Numba" class="headerlink" title="Numba"></a>Numba</h2><p>Numba utilizes just-in-time(JIT) compilation, which could finish compilation during execution. So numba could <strong>infer the type</strong> of your Python object(variable) <strong>during your execution</strong>. People may ask here, why mainstream Python compiler do not support this feature? There are too many history problems here. Nowadays, the most popular python <em>Interpreter</em> is <a href="https://github.com/python/cpython" target="_blank" rel="external"><strong>CPython</strong></a> who uses a <a href="https://wiki.python.org/moin/GlobalInterpreterLock" target="_blank" rel="external">GIL</a>(GlobalInterpreterLock). Some minor <em>Interpreters</em> are trying to do these things, but they are still catching up, e.g <a href="https://pypy.org/" target="_blank" rel="external"><strong>PyPy</strong></a>.</p>
 <p>The basic usage of Numba is to add function decorator <strong>@jit</strong> to let Numba itself decide how to deal with the function. </p>
@@ -680,6 +680,54 @@ cdef extern from &quot;Env.h&quot;:
         void reverse()
         vector[pair[int, int]] warmup()
         int done()
+</code></pre><p>At the beginning of the code, we import some <strong>C++ std library</strong> implemented by Cython. We need to use it to interact with the C/C++ source code.</p>
+<ul>
+<li><code>cdef extern from xxx.h [namespace xxx]</code> tells the Cython which hearer file I am going to wrap.</li>
+<li><code>cdef cppclass Env:</code> is going to define a C++ wrapper class in Cython</li>
+<li>Then we need to declare the function we want to call in our Python code. </li>
+<li>The type of the function need to be exactly the same as the C/C++ source code, and the type must be in Cython type. You could learn how to do that throught the examples I listed below or throught the <a href="https://github.com/cython/cython" target="_blank" rel="external"><strong>source code</strong></a></li>
+<li>I list some type transformation here<ul>
+<li><code>bool -&gt; bint</code> This is quite important since Python do not have a boolean type</li>
+<li><code>std::map&lt;std::pair&lt;int, int&gt;, std::vector&lt;double&gt; &gt; -&gt; map[pair[int, int], vector[double]]</code></li>
+<li><code>std::vector&lt;std::pair&lt;int, int&gt; &gt; -&gt; vector[pair[int, int]]</code></li>
+<li><code>std::map&lt;std::pair&lt;int, int&gt;, int&gt; -&gt; map[pair[int, int], int]</code></li>
+<li>How to deal with string in C++ is really complicated, please see <a href="http://cython.readthedocs.io/en/latest/src/tutorial/strings.html" target="_blank" rel="external">documents</a> for more details.</li>
+</ul>
+</li>
+</ul>
+<p>Then we need to define a Cython class as an interface to interact with the Cython wrapper C++ class.</p>
+<pre><code>cdef class EnvC:
+    cdef Env env
+    def __cinit__(self):
+        self.env = Env()
+</code></pre><ul>
+<li><code>cdef Env env</code> holds a C++ instance(interface) that we’re wrapping.</li>
+<li><code>__cinit__</code> is something like <code>__init__</code></li>
+</ul>
+<p>Then we need to wrap(build interface for) each function we want to call. Here I give some examples of the complicated functions.</p>
+<pre><code># C++ declaration
+void action_test(vector[pair[int, int]])
+
+# Cython interface
+def action_test(self, actions):
+    cdef vector[pair[int, int]] vec
+    for item in actions:
+        ret = [item[0], item[1]]
+        vec.push_back(ret)
+    self.env.action_test(vec)
+</code></pre><p>We use <code>cdef vector[pair[int, int]] vec</code> to construct a Cython warpper <code>std::vector&lt;std::pair&lt;int, int&gt; &gt;</code> data struct in C++. Then we pass it to the C++ code throught the C++ instance(interface).</p>
+<p>There is no clear documents about how to contruct the Cython warpper <strong>C++ std library</strong>, you could try some reasonable usages to figure it out by yourself, or just go through the source code of Cython. Basicly, the API implemented by Cython is almost the same with that in C++, at least for the name.</p>
+<p>Here is another example:</p>
+<pre><code># C++ declaration
+void greedy_action(pair[int, int], int)
+
+# Cython interface
+def greedy_action(self, action, left):
+    cdef pair[int, int] act
+    cdef int step
+    step = left
+    act = [action[0], action[1]]
+    self.env.greedy_action(act, step)
 </code></pre>
       
     </div>
