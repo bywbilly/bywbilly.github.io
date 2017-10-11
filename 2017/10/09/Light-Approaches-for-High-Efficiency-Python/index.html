@@ -95,7 +95,7 @@
 <meta property="og:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomoes the most popular program language in AI field. However, the first point is at the expense of executing speed. Y">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png">
-<meta property="og:updated_time" content="2017-10-11T14:27:40.000Z">
+<meta property="og:updated_time" content="2017-10-11T14:49:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomoes the most popular program language in AI field. However, the first point is at the expense of executing speed. Y">
@@ -812,10 +812,39 @@ def row(self):
 <h2 id="Multiprocessing"><a href="#Multiprocessing" class="headerlink" title="Multiprocessing"></a>Multiprocessing</h2><p>Some tasks naturally are <strong>highly parallel</strong>. If we could write some <strong>Multi-threading</strong> or <strong>Multi-processing</strong> programs, which will make it execute much faster. A good news is dealing with threading or process in Python is not quite difficult. </p>
 <p>For most tasks of <strong>AI</strong>, like preprocessing all the data points, <strong>Multi-threading</strong> seems to be reasonable due to the shared memory. But here I only introduce <strong>Multi-processing</strong> in Python in that the program with <strong>multi-threading</strong> will run even slower than the single thread program due to the <strong>GIL</strong> used by the interpreter of <strong>CPython</strong>. For more information about <strong>GIL</strong>, you could refer to <a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="external">UnderstandingGIL</a>.</p>
 <p>Python provide us with a useful library <code>multiprocessing</code>, we could easily apply multiprocessing to the task that has formula <code>y = map(f, x)</code> with the help of <code>multiprocessing.pool</code>.</p>
-<p>Consider <code>x</code> is a vector and <code>f(x)</code> is a function that returns <code>x + 1</code>. You want to get the results of apply <code>f</code> to each element of <code>x</code>, which is a typical high parallel senrio. You could write:</p>
-<p>`</p>
-<p>` </p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<p>Consider <code>x</code> is a vector and <code>f(x)</code> is a function that returns <code>x + 1</code>. You want to get the results of applying <code>f</code> to each element of <code>x</code>, which is a typical high parallel senrio. You could write it with several methods, I only list two of it:</p>
+<pre><code>import numpy as np
+import multiprocessing
+
+def f(x):
+    return x + 1
+
+cores = multiprocessing.cpu_count() # Get the number of cores
+pool  = multiprocessing.Pool(processes=cores)
+
+x = np.arange(3)
+
+# Return a list
+pool.map(f, x) # return [1, 2, 3]
+
+# Return a interator in order
+for y in pool.imap(f, x): # return 1, 2, 3
+</code></pre><p>There are also some advanced methods, you could refer to <a href="https://docs.python.org/2/library/multiprocessing.html" target="_blank" rel="external"><strong>doc</strong></a>.</p>
+<h3 id="Issues-with-CUDA"><a href="#Issues-with-CUDA" class="headerlink" title="Issues with CUDA"></a>Issues with CUDA</h3><p>When you use <code>multiprocessing</code> and <code>Tensorflow/Pytorch</code> with <strong>CUDA</strong>, you may get the error message</p>
+<p><code>could not retrieve CUDA device count: CUDA_ERROR_NOT_INITIALIZED</code><br>The reason is that when you <code>import tensorflow</code>, tensorflow may call some tools of CUDA, which could generate some side-effects. When these side-effects are copied into each child process, this error may occur.</p>
+<p>The idea to avoid this error is to <strong>do not import</strong> these liberaries in the father process.</p>
+<pre><code>import multiprocessing
+
+def _init():
+    global tf
+    import tensorflow as tf
+    global sess
+    sess = tf.Session()
+
+if __name__ == &quot;__main__&quot;:
+    cores = multiprocessing.cpu_count()
+    pool  = multiprocessing.Pool(processes=cores - 1, initializer=_init)     
+</code></pre><h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
 <li><a href="https://numba.pydata.org/" target="_blank" rel="external"><strong>Numba Documents</strong></a></li>
 <li><a href="http://docs.cython.org/en/latest/" target="_blank" rel="external"><strong>Cython Documents</strong></a></li>
 <li><a href="https://github.com/cython/cython" target="_blank" rel="external"><strong>Cython Source Code</strong></a></li>

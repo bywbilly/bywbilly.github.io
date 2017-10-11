@@ -8,5 +8,6 @@ if __name__ == "__main__":
     cores = multiprocessing.cpu_count()
     pool  = multiprocessing.Pool(processes=cores)
 
-    x = np.arange(100000000)
+    x = np.arange(100)
     y = pool.map(f, x)
+    print y
