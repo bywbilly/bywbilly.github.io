@@ -87,18 +87,18 @@
 
 
 
-<meta name="description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomoes the most popular program language in AI field. However, the first point is at the expense of executing speed. Y">
+<meta name="description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomes the most popular program language in AI field. However, the first point is at the expense of executing speed. Yo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Light Approaches for High-Efficiency Python">
 <meta property="og:url" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/index.html">
 <meta property="og:site_name" content="bywbilly">
-<meta property="og:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomoes the most popular program language in AI field. However, the first point is at the expense of executing speed. Y">
+<meta property="og:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomes the most popular program language in AI field. However, the first point is at the expense of executing speed. Yo">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png">
-<meta property="og:updated_time" content="2017-10-11T14:49:22.000Z">
+<meta property="og:updated_time" content="2017-10-11T15:00:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
-<meta name="twitter:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomoes the most popular program language in AI field. However, the first point is at the expense of executing speed. Y">
+<meta name="twitter:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomes the most popular program language in AI field. However, the first point is at the expense of executing speed. Yo">
 <meta name="twitter:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
 
 
@@ -363,7 +363,7 @@
       
 
       
-        <p>Python is well known for easy coding and calling c/c++ libraries. So it quickly becomoes the most popular program language in <strong>AI</strong> field. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries.</p>
+        <p>Python is well known for easy coding and calling c/c++ libraries. So it quickly becomes the most popular program language in <strong>AI</strong> field. However, the first point is at the expense of executing speed. You also need to strictly follow Python instructions to call c/c++ libraries.</p>
 <p>So, here comes a question: Can we make Python run much faster? The answer is definitely <strong>YES</strong>! I will introduce some <strong>Light-Approaches</strong> for speeding up Python! There are three main technology–<strong>Numba</strong>, <strong>Cython</strong> and <strong>Multiprocessing</strong>.</p>
 <p>Before introducing the light approaches to speed up Python, I want to show a little example – sum up a 2-dimension array.</p>
 <p>Original Python:</p>
@@ -426,7 +426,7 @@ In [7]: %timeit -n 10 -r 3 cython_sum2d(x)
 
 In [8]: %timeit -n 10 -r 3 trivial_sum2d(x)
 10 loops, best of 3: 27 s per loop
-</code></pre><p>Numba and Cython’s running time are almost the same and it’s about <strong>290</strong> times faster than original Python. You may not believe me if I say that it runs even <strong>faster</strong> than trivial C++ code. Let’s do it!</p>
+</code></pre><p>Numba and Cython’s running time is almost the same and it’s about <strong>290</strong> times faster than original Python. You may not believe me if I say that it runs even <strong>faster</strong> than trivial C++ code. Let’s do it!</p>
 <p>Trivial C++:</p>
 <pre><code>#include &lt;ctime&gt;
 #include &lt;cstdlib&gt;
@@ -536,7 +536,7 @@ def vec_add(x, c):
 <p>However, Numba also has its own limitations. It does not support list comprehension and does not support the inference of any function in <strong>Numpy.random</strong>. So it’s not as good as we think when you actually use it. So I recommend that it’s really good for optimizing numerous <strong>for loop</strong> with easy matrix calculation. We could also expect that Numba will support more and more features in the future. Actually, in the next pre-release version, it said that they will support <strong>Numpy.random</strong>.</p>
 <p>Numba also supports some more powerful but experimental features, like <strong>auto parallel</strong>. To learn more about it, you could refer to the <a href="http://numba.pydata.org/numba-doc/0.35.0/user/jit.html" target="_blank" rel="external"><strong>doc</strong></a>. </p>
 <h1 id="Cython"><a href="#Cython" class="headerlink" title="Cython"></a>Cython</h1><p>Now I am going to introduce Cython and I quite like Cython(Maybe just because I was using Cython for some time before I knew Numba). </p>
-<p>The way Cython used to optimize Python code is more straightforward. It just try to translate the Python code with little modification into  C/C++ code. Then compile these code into <strong>Dynamic-link library(DLL)</strong>. After that, Python Interpreter could load this DLL library and use it!</p>
+<p>The way Cython used to optimize Python code is more straightforward. It just tries to translate the Python code with little modification into  C/C++ code. Then compile these code into <strong>Dynamic-link library(DLL)</strong>. After that, Python Interpreter could load this DLL library and use it!</p>
 <p>So if you want to use Cython to speed up your code, you need to learn how to write Cython code.</p>
 <p>It’s a little bit complicated than Numba, but it’s quite easy compared with using C/C++ directly.</p>
 <p>I’d like to use the code listed previously to explain how to write Cython code.</p>
@@ -574,7 +574,7 @@ def sum2d(arr):
 <li>If you do not declare <strong>explicitly</strong> the type of function or variable, cython will regard it as a Python object.</li>
 <li>Like listed previously, <strong>cdef</strong> defines a function in pure C/C++, we cannot call it directly from a Python program, so we use another interface(<strong>sum2d</strong>) to call it.</li>
 </ul>
-<p>Do you still remember the basic idea of Cython?  Cython compiler needs to translates/compiles the Cython code into C/C++ code that calls Python source code directly, then wrap it as a dynamic-link library. To make this, we need to write some instructions for compiling.</p>
+<p>Do you still remember the basic idea of Cython?  Cython compiler needs to translate/compile the Cython code into C/C++ code that calls Python source code directly, then wrap it as a dynamic-link library. To make this, we need to write some instructions for compiling.</p>
 <p>We call these instructions <code>setup.py</code> conventionally.</p>
 <pre><code># setup.py
 from distutils.core import setup, Extension
@@ -811,8 +811,8 @@ def row(self):
 <p>But Cython <strong>do not</strong> supports <code>auto</code> and return a left value. They are still working on developing these features.</p>
 <h2 id="Multiprocessing"><a href="#Multiprocessing" class="headerlink" title="Multiprocessing"></a>Multiprocessing</h2><p>Some tasks naturally are <strong>highly parallel</strong>. If we could write some <strong>Multi-threading</strong> or <strong>Multi-processing</strong> programs, which will make it execute much faster. A good news is dealing with threading or process in Python is not quite difficult. </p>
 <p>For most tasks of <strong>AI</strong>, like preprocessing all the data points, <strong>Multi-threading</strong> seems to be reasonable due to the shared memory. But here I only introduce <strong>Multi-processing</strong> in Python in that the program with <strong>multi-threading</strong> will run even slower than the single thread program due to the <strong>GIL</strong> used by the interpreter of <strong>CPython</strong>. For more information about <strong>GIL</strong>, you could refer to <a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="external">UnderstandingGIL</a>.</p>
-<p>Python provide us with a useful library <code>multiprocessing</code>, we could easily apply multiprocessing to the task that has formula <code>y = map(f, x)</code> with the help of <code>multiprocessing.pool</code>.</p>
-<p>Consider <code>x</code> is a vector and <code>f(x)</code> is a function that returns <code>x + 1</code>. You want to get the results of applying <code>f</code> to each element of <code>x</code>, which is a typical high parallel senrio. You could write it with several methods, I only list two of it:</p>
+<p>Python provides us with a useful library <code>multiprocessing</code>, we could easily apply multiprocessing to the task that has formula <code>y = map(f, x)</code> with the help of <code>multiprocessing.pool</code>.</p>
+<p>Consider <code>x</code> is a vector and <code>f(x)</code> is a function that returns <code>x + 1</code>. You want to get the results of applying <code>f</code> to each element of <code>x</code>, which is a typical high parallel scenario. You could write it with several methods, I only list two of it:</p>
 <pre><code>import numpy as np
 import multiprocessing
 
@@ -832,24 +832,31 @@ for y in pool.imap(f, x): # return 1, 2, 3
 </code></pre><p>There are also some advanced methods, you could refer to <a href="https://docs.python.org/2/library/multiprocessing.html" target="_blank" rel="external"><strong>doc</strong></a>.</p>
 <h3 id="Issues-with-CUDA"><a href="#Issues-with-CUDA" class="headerlink" title="Issues with CUDA"></a>Issues with CUDA</h3><p>When you use <code>multiprocessing</code> and <code>Tensorflow/Pytorch</code> with <strong>CUDA</strong>, you may get the error message</p>
 <p><code>could not retrieve CUDA device count: CUDA_ERROR_NOT_INITIALIZED</code><br>The reason is that when you <code>import tensorflow</code>, tensorflow may call some tools of CUDA, which could generate some side-effects. When these side-effects are copied into each child process, this error may occur.</p>
-<p>The idea to avoid this error is to <strong>do not import</strong> these liberaries in the father process.</p>
+<p>The idea to avoid this error is to <strong>do not import</strong> these libraries in the father process. When you construct a <code>Pool</code> object, you could pass an argument <code>initializer</code> which will be called once when each child process is created. So you could pass an <code>init</code> function to that argument. Here is an example:</p>
 <pre><code>import multiprocessing
 
 def _init():
-    global tf
+    global tf # You need global here or the train function would not know that
     import tensorflow as tf
-    global sess
+    global sess    
     sess = tf.Session()
+
+ def train(x):
+     # training algorithm
+     sess.run([xxx]) # The tensorflow variable you&apos;d like to evaluate
 
 if __name__ == &quot;__main__&quot;:
     cores = multiprocessing.cpu_count()
-    pool  = multiprocessing.Pool(processes=cores - 1, initializer=_init)     
+    pool  = multiprocessing.Pool(processes=cores-1, initializer=_init)     
+
+    pool.map(train, x) # x is a list of training_parameter or whatever
 </code></pre><h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
 <li><a href="https://numba.pydata.org/" target="_blank" rel="external"><strong>Numba Documents</strong></a></li>
 <li><a href="http://docs.cython.org/en/latest/" target="_blank" rel="external"><strong>Cython Documents</strong></a></li>
 <li><a href="https://github.com/cython/cython" target="_blank" rel="external"><strong>Cython Source Code</strong></a></li>
 <li><a href="https://abcdabcd987.com/cython/" target="_blank" rel="external"><strong>Lequn Chen’s blog(chinese)</strong></a></li>
 <li><a href="https://wiki.python.org/moin/" target="_blank" rel="external"><strong>Python wiki</strong></a></li>
+<li><a href="https://docs.python.org/2/library/multiprocessing.html" target="_blank" rel="external"><strong>Multiprocessing Documents</strong></a></li>
 </ul>
 
       
