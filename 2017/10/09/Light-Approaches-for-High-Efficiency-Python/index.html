@@ -95,7 +95,7 @@
 <meta property="og:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomes the most popular program language in AI field. However, the first point is at the expense of executing speed. Yo">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/sum2dcpp.png">
 <meta property="og:image" content="http://bywbilly.com/2017/10/09/Light-Approaches-for-High-Efficiency-Python/2.png">
-<meta property="og:updated_time" content="2017-10-11T15:00:17.000Z">
+<meta property="og:updated_time" content="2017-10-11T17:29:19.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Light Approaches for High-Efficiency Python">
 <meta name="twitter:description" content="Python is well known for easy coding and calling c/c++ libraries. So it quickly becomes the most popular program language in AI field. However, the first point is at the expense of executing speed. Yo">
@@ -810,7 +810,7 @@ def row(self):
 </ul>
 <p>But Cython <strong>do not</strong> supports <code>auto</code> and return a left value. They are still working on developing these features.</p>
 <h2 id="Multiprocessing"><a href="#Multiprocessing" class="headerlink" title="Multiprocessing"></a>Multiprocessing</h2><p>Some tasks naturally are <strong>highly parallel</strong>. If we could write some <strong>Multi-threading</strong> or <strong>Multi-processing</strong> programs, which will make it execute much faster. A good news is dealing with threading or process in Python is not quite difficult. </p>
-<p>For most tasks of <strong>AI</strong>, like preprocessing all the data points, <strong>Multi-threading</strong> seems to be reasonable due to the shared memory. But here I only introduce <strong>Multi-processing</strong> in Python in that the program with <strong>multi-threading</strong> will run even slower than the single thread program due to the <strong>GIL</strong> used by the interpreter of <strong>CPython</strong>. For more information about <strong>GIL</strong>, you could refer to <a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="external">UnderstandingGIL</a>.</p>
+<p>For most tasks of <strong>AI</strong>, like preprocessing all the data points, <strong>Multi-threading</strong> seems to be reasonable due to the shared memory. But here I only introduce <strong>Multi-processing</strong> in Python in that the program with <strong>multi-threading</strong> will run even slower than the single thread program due to the <strong>GIL</strong> used by the interpreter of <strong>CPython</strong>. For more information about <strong>GIL</strong>, you could refer to <a href="https://jeffknupp.com/blog/2013/06/30/pythons-hardest-problem-revisited/" target="_blank" rel="external">Python’s Hardest Problem</a> and <a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="external">UnderstandingGIL</a>.</p>
 <p>Python provides us with a useful library <code>multiprocessing</code>, we could easily apply multiprocessing to the task that has formula <code>y = map(f, x)</code> with the help of <code>multiprocessing.pool</code>.</p>
 <p>Consider <code>x</code> is a vector and <code>f(x)</code> is a function that returns <code>x + 1</code>. You want to get the results of applying <code>f</code> to each element of <code>x</code>, which is a typical high parallel scenario. You could write it with several methods, I only list two of it:</p>
 <pre><code>import numpy as np
