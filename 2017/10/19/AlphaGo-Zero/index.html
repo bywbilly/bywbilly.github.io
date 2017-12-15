@@ -96,8 +96,8 @@
 <meta property="og:description" content="好久前就挖了这个坑，一直忙于各种事情没有填。 现在我在AA 2023费城到菲尼克斯的航班上百无聊赖了3h后决定填坑。 不过种草了AA的757还是十分开心的。
 回归正题，AZ(AlphaGo Zero)是一项更加令我震惊的工作，我从来没想到仅仅依靠围棋规则，agent自身就可以学到一个远超人类的水平。可能是从来没有想到围棋这么大的状态空间中，结构化的程度会那么高。同时整个系统没有了前代各种冗余的成分">
 <meta property="og:image" content="http://bywbilly.com/2017/10/19/AlphaGo-Zero/1.png">
-<meta property="og:image" content="http://bywbilly.com/2017/10/19/AlphaGo-Zero/1.png">
-<meta property="og:updated_time" content="2017-12-15T21:20:43.517Z">
+<meta property="og:image" content="http://bywbilly.com/2017/10/19/AlphaGo-Zero/2.png">
+<meta property="og:updated_time" content="2017-12-15T21:22:28.133Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AlphaGo Zero">
 <meta name="twitter:description" content="好久前就挖了这个坑，一直忙于各种事情没有填。 现在我在AA 2023费城到菲尼克斯的航班上百无聊赖了3h后决定填坑。 不过种草了AA的757还是十分开心的。
@@ -373,7 +373,7 @@
 <p>AZ合并后的网络由图可知，输入是一些非常basic的feature，输出是两部分，第一部分是所有可能的下一步的概率分布（包括pass），第二部分则是对于当前选手来说的胜率。 Basic的feature是这样的，对于每一个可落子位置，我们有 $X<em>i \dots X</em>{i - 7}, Y<em>i \dots Y</em>{u - 7}, C$ 这17个binary的feature。 $X_i$表示这个位置在时刻i有没有当前棋手的子，$Y_i$就是表示对手的，$C$则是说当前棋手是不是先手。$C$的意义非常显然，先手需要贴目给后手，所以NN需要这个feature去判断形势。但是往前8手的历史信息就有点令人摸不着头脑了。Deepmind自己给出的解释是： 围棋仅仅考虑当前棋盘上的子不是fully observable的，所以我们要引入一些历史知识。 这句话从围棋的角度来看是没错，可是它们在NN的作用中真的那么重要吗，我的理解是没有那么重要，因为这些细节应该由MCTS来考虑，而不是NN。 但显然强调这些拥有domain knowledge的feature对于deepmind是没有好处的，所以看起来它们真的很重要，我一开始没发现paper里report了，NIPS现场问了silver才发现，pure policy model的实力大概是职业初段的水平，非常的令人震惊。</p>
 <p>下面来看我认为AZ中最核心的部分–将RL(reinforcement learning)和MCTS(Monte Carlo Tree Search)结合。 同时我也相信，在这一版的AlphaGo中，MCTS仍然占有不可动摇的地位，这仍然是一次<strong>system</strong>的胜利，而不是<strong>Neural Netowrk Model</strong>的胜利。即搜索的地位是无法被强大的神经网络所代替的。那么就引出了一个新问题，扔掉<strong>MCTS</strong>的情况下，pure的神经网络的水平有多少？ 非常好奇，但是paper也没有report。</p>
 <p>结合两者的核心之处就在于–我们相信给定一个初始概率分布，经过MCTS做planning后的概率分布是要优于前者的，同时我们搜索次数越多，这个概率分布就越优。那么我们利用<strong>Policy Iteration</strong>的思想，把MCTS看成一种<strong>Policy Evaluation Operator</strong>和<strong>Policy Improvement Poerator</strong>结合的operator。<strong>Policy Iteration</strong>的基本思想就是evaluate当前的策略，根据evaluate的结果优化当前的策略，然后直到收敛。我们这里就是利用MCTS来评估和优化。</p>
-<img src="/2017/10/19/AlphaGo-Zero/1.png" alt="AZ Policy Model" title="AZ Policy Model">
+<img src="/2017/10/19/AlphaGo-Zero/2.png" alt="MCTS Evalution" title="MCTS Evalution">
 <p>先来看评估，这里我们先忽略掉MCTS的细节，后面会提到。每一步都会执行一个MCTS，这个MCTS在搜索1600次后会结束。然后我们用搜索后的经过优化的概率分布在棋盘上下出下一步。重复这个过程直至棋局结束，判断结束的规则有三点，都是很detail的围棋规则。 结束的盘面会由Tromp-Taylor规则给出最后的胜负$Z \in {-1, 1}$。 这中间所有的这种类型的tuple $(S_i, \pi_i, Z)$都会被存下用作policy improvement，其中$S_i$是i时刻的盘面，$\pi_i$是搜索后被优化的概率分布，$Z$是最终的真是的结果。</p>
 <p>更新就显得非常显然，我们sample一个tuple minibatch，然后去优化下述这个loss functio： $l = (z - v)^2 - \mathbf{\pi}^{T}\log{\mathbf{P}} + c||\theta||^2$，其中第一项就是真实结果和预测结果的MSE，第二项就是原始概率分布和经过MCTS优化后的概率分布间的Cross Entropy，第三项就是一个L2正则。基本的想法就是让预测值和经过MCTS后的优化值尽量靠近。</p>
 
